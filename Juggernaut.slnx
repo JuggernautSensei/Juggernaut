@@ -1,0 +1,24 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Example/">
+    <Project Path="Sandbox/Sandbox.vcxproj" Id="01d31870-3975-4ca6-b4fd-afa2ff99ef86" />
+  </Folder>
+  <Folder Name="/Vendor/" />
+  <Folder Name="/Vendor/JugGfx/">
+    <Project Path="Vendor/JugGfx/JugGfx.vcxproj" Id="deefa6fc-767a-4cd0-bd6f-6c1be93ecb5e" />
+  </Folder>
+  <Folder Name="/Vendor/JugNet/">
+    <Project Path="Vendor/JugNet/JugNet.vcxproj" Id="798c1f7b-3d2b-4c33-9f28-972272539018" />
+  </Folder>
+  <Folder Name="/Vendor/JugX/">
+    <Project Path="Vendor/JugGfx/Vendor/JugX/JugX.vcxproj" Id="71c0cb85-1218-4140-95ff-caca4f615774" />
+  </Folder>
+  <Folder Name="/Vendor/JugX/Test/">
+    <Project Path="Vendor/JugGfx/Vendor/JugX/Bench/Bench.vcxproj" Id="770a382c-ca9f-4528-b490-2cc680d5d501" />
+    <Project Path="Vendor/JugGfx/Vendor/JugX/Test/Test.vcxproj" Id="a031c3ec-467d-479b-995f-aabff1fd2065" />
+  </Folder>
+  <Project Path="Juggernaut.vcxproj" Id="62327ffe-cb00-4347-8efd-6c3e5d68474d" />
+</Solution>

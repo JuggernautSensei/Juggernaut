@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- JugX 는 JugGfx 가 가진 사본 하나만 링크한다. Vendor/JugNet 도 같은 JugX 헤더로 컴파일해야 ODR 불일치가 없다. -->
+  <PropertyGroup>
+    <JugXRoot>$(MSBuildThisFileDirectory)Vendor\JugGfx\Vendor\JugX\</JugXRoot>
+  </PropertyGroup>
+</Project>

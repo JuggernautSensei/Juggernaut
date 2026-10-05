@@ -1,0 +1,95 @@
+"""Generates Juggernaut/Juggernaut.h, the single public entry header for Juggernaut.
+
+Base-filter headers (the ones Juggernaut/pch.h already includes) load first, in
+pch.h's own order. Everything else loads after, alphabetically. The two
+blocks are separated by a banner comment so clang-format's include sorter
+(which only reorders within a contiguous block) can't merge them.
+
+Run after adding/removing a header in Juggernaut/.
+"""
+
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SOURCE_DIR = PROJECT_ROOT / "Juggernaut"
+FILTERS_FILE = PROJECT_ROOT / "Juggernaut.vcxproj.filters"
+PCH_FILE = SOURCE_DIR / "pch.h"
+OUTPUT_FILE = SOURCE_DIR / "Juggernaut.h"
+
+MSBUILD_NS = "{http://schemas.microsoft.com/developer/msbuild/2003}"
+
+
+def get_base_filter_headers() -> set[str]:
+    root = ET.parse(FILTERS_FILE).getroot()
+    headers = set()
+    for cl_include in root.iter(f"{MSBUILD_NS}ClInclude"):
+        filter_elem = cl_include.find(f"{MSBUILD_NS}Filter")
+        if filter_elem is not None and filter_elem.text == "Base":
+            name = Path(cl_include.attrib["Include"]).name
+            headers.add(name)
+    return headers
+
+
+def get_pch_include_order() -> list[str]:
+    text = PCH_FILE.read_text(encoding="utf-8")
+    return re.findall(r'#include\s+"([^"]+)"', text)
+
+
+def main() -> None:
+    base_filter_headers = get_base_filter_headers()
+    base_filter_headers.discard("pch.h")
+    base_filter_headers.discard(OUTPUT_FILE.name)
+
+    base_order = get_pch_include_order()
+    if set(base_order) != base_filter_headers:
+        missing_from_pch = base_filter_headers - set(base_order)
+        missing_from_filter = set(base_order) - base_filter_headers
+        if missing_from_pch:
+            print(f"warning: in Base filter but not in pch.h: {sorted(missing_from_pch)}", file=sys.stderr)
+        if missing_from_filter:
+            print(f"warning: in pch.h but not tagged Base in filters: {sorted(missing_from_filter)}", file=sys.stderr)
+
+    all_headers = {p.name for p in SOURCE_DIR.glob("*.h")}
+    all_headers.discard("pch.h")
+    all_headers.discard(OUTPUT_FILE.name)
+
+    base_headers = [h for h in base_order if h in all_headers]
+    rest_headers = sorted(all_headers - set(base_headers))
+
+    lines = ["#pragma once", ""]
+    lines.append("// ===========================================")
+    lines.append("//  Vendor")
+    lines.append("// ===========================================")
+    lines.append("")
+    lines.append("#include <JugGfx/JugGfx.h>")
+    lines.append("#include <JugNet/JugNet.h>")
+    lines.append("")
+    lines.append("// ===========================================")
+    lines.append("//  Base")
+    lines.append("// ===========================================")
+    lines.append("")
+    lines += [f'#include "{h}"' for h in base_headers]
+    lines.append("")
+    lines.append("// ===========================================")
+    lines.append("//  Headers")
+    lines.append("// ===========================================")
+    lines.append("")
+    lines += [f'#include "{h}"' for h in rest_headers]
+    lines.append("")
+
+    content = "\n".join(lines)
+    # 내용이 같으면 쓰지 않는다. 병렬 빌드 중 다른 프로젝트가 헤더를 열고 있으면
+    # 쓰기가 PermissionError로 실패하고, 타임스탬프 갱신으로 불필요한 재컴파일도 생긴다.
+    if OUTPUT_FILE.exists() and OUTPUT_FILE.read_text(encoding="utf-8-sig") == content:
+        print(f"up to date: {OUTPUT_FILE}")
+        return
+
+    OUTPUT_FILE.write_text(content, encoding="utf-8")
+    print(f"wrote {OUTPUT_FILE} ({len(base_headers)} base + {len(rest_headers)} rest headers)")
+
+
+if __name__ == "__main__":
+    main()

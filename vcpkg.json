@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "juggernaut",
+  "version-semver": "0.1.0",
+  "description": "Juggernaut engine",
+  "homepage": "https://github.com/JuggernautSensei/Juggernaut",
+  "builtin-baseline": "e3ed41868d5034bc608eaaa58383cd6ecdbb5ffb",
+  "dependencies": [
+    {
+      "name": "openimageio",
+      "features": [ "gif" ]
+    },
+    "basisu",
+    "cgltf",
+    "ktx",
+    "parallel-hashmap",
+    "sdl3",
+    "imguizmo",
+    "utfcpp",
+    "yyjson",
+    "entt",
+    "spdlog",
+    {
+      "name": "imgui",
+      "features": [ "docking-experimental", "sdl3-binding" ]
+    }
+  ]
+}

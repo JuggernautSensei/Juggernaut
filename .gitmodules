@@ -1,0 +1,6 @@
+[submodule "Vendor/JugGfx"]
+	path = Vendor/JugGfx
+	url = https://github.com/JuggernautSensei/JugGfx.git
+[submodule "Vendor/JugNet"]
+	path = Vendor/JugNet
+	url = https://github.com/JuggernautSensei/JugNet.git
