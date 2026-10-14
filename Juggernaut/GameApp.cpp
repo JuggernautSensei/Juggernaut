@@ -18,7 +18,7 @@ void GameApp::Init()
 #ifdef JUG_DEBUG
     flags |= eGraphicsOption::Debug;
 #endif
-    m_pGraphics = MakeScoped<Graphics>(flags);
+    m_pGraphics = MakeScoped<Graphics_D3D11>(flags);
 }
 
 void GameApp::Shutdown()
